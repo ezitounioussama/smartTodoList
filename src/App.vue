@@ -25,8 +25,9 @@ import "./style.css";
 
     <input
       v-model="message"
+      @keyup.enter="addToList"
       type="text"
-      class="block w-full p-4 pl-12 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      class="w-[550px] p-4 pl-12 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       placeholder="Add Tasks..."
     />
 
@@ -39,8 +40,11 @@ import "./style.css";
     </button>
   </div>
   <article
-    class="rounded-xl border border-gray-700 bg-gray-800 p-4 mx-5 text-white"
+    :class="articleHidden ? 'hidden' : ''"
+    class="rounded-xl border border-gray-700 bg-gray-800 p-4 mx-5 text-white w-[550px]"
   >
+    <input type="checkbox" @change="(e) => selectAll(e.target.checked)" />
+    <span class="mx-3">Select All</span>
     <div
       :class="item.isHidden ? 'hidden' : ''"
       class="mt-4 space-y-2"
@@ -48,20 +52,29 @@ import "./style.css";
       :key="index"
     >
       <div class="flex justify-between items-center">
-        <input
-          type="checkbox"
-          v-model="item.isDone"
-          :checked="item.isDone"
-          @change="() => !item.isDone"
-        />
+        <div class="flex">
+          <input
+            type="checkbox"
+            v-model="item.isDone"
+            :checked="item.isDone"
+            @change="() => !item.isDone"
+          />
 
-        <span
-          class="block h-full rounded-lg border border-gray-700 p-4 hover:border-pink-600"
-        >
-          <p class="mt-1 text-xs font-medium text-gray-300">
-            {{ item.message }}
-          </p>
-        </span>
+          <span
+            class="block mx-3 h-full rounded-lg border border-gray-700 p-2 hover:border-pink-600"
+          >
+            <p
+              class="text-lg font-medium text-gray-300"
+              :class="
+                item.isDone
+                  ? 'line-through decoration-4 decoration-blue-600'
+                  : ''
+              "
+            >
+              {{ item.message }}
+            </p>
+          </span>
+        </div>
         <svg
           @click="() => remove(index)"
           xmlns="http://www.w3.org/2000/svg"
@@ -81,10 +94,12 @@ import "./style.css";
     </div>
   </article>
   <div>
-    <ul>
-      <li>Done : {{ count.Done }}</li>
-      <li>Not Done : {{ count.toBeDone }}</li>
-      <li>total : {{ count.Done + count.toBeDone }}</li>
+    <ul
+      class="fixed bottom-10 justify-center flex right-[35%] left-[35%] border p-5"
+    >
+      <li class="mx-6">Done : {{ count.Done }}</li>
+      <li class="mx-6">Not Done : {{ count.toBeDone }}</li>
+      <li class="mx-6">total : {{ count.Done + count.toBeDone }}</li>
     </ul>
   </div>
 </template>
@@ -95,19 +110,28 @@ export default {
     return {
       message: "",
       items: [],
+      console: console,
+      articleHidden: true,
     };
   },
   methods: {
+    selectAll(value) {
+      this.items.forEach((item) => (item.isDone = value));
+    },
     addToList() {
       this.items.push({
         message: this.message,
         isHidden: false,
         isDone: false,
       });
+      this.articleHidden = false;
       this.message = "";
     },
     remove(index) {
       this.items[index].isHidden = true;
+      this.count.AllCount < 1
+        ? (this.articleHidden = true)
+        : (this.articleHidden = false);
     },
   },
   computed: {
@@ -115,6 +139,7 @@ export default {
       return {
         Done: this.items.filter((e) => !e.isHidden && e.isDone).length,
         toBeDone: this.items.filter((e) => !e.isHidden && !e.isDone).length,
+        AllCount: this.items.filter((e) => !e.isHidden).length,
       };
     },
   },
