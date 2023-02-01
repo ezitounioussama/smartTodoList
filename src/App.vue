@@ -48,6 +48,13 @@ import "./style.css";
       :key="index"
     >
       <div class="flex justify-between items-center">
+        <input
+          type="checkbox"
+          v-model="item.isDone"
+          :checked="item.isDone"
+          @change="() => !item.isDone"
+        />
+
         <span
           class="block h-full rounded-lg border border-gray-700 p-4 hover:border-pink-600"
         >
@@ -73,8 +80,13 @@ import "./style.css";
       </div>
     </div>
   </article>
-
-  <h1>{{ count }}</h1>
+  <div>
+    <ul>
+      <li>Done : {{ count.Done }}</li>
+      <li>Not Done : {{ count.toBeDone }}</li>
+      <li>total : {{ count.Done + count.toBeDone }}</li>
+    </ul>
+  </div>
 </template>
 <script>
 // import List from "./components/list.vue";
@@ -87,7 +99,11 @@ export default {
   },
   methods: {
     addToList() {
-      this.items.push({ message: this.message, isHidden: false });
+      this.items.push({
+        message: this.message,
+        isHidden: false,
+        isDone: false,
+      });
       this.message = "";
     },
     remove(index) {
@@ -96,7 +112,10 @@ export default {
   },
   computed: {
     count() {
-      return this.items.filter((e) => !e.isHidden).length;
+      return {
+        Done: this.items.filter((e) => !e.isHidden && e.isDone).length,
+        toBeDone: this.items.filter((e) => !e.isHidden && !e.isDone).length,
+      };
     },
   },
 };
