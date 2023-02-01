@@ -76,7 +76,6 @@ import "./style.css";
 
   <h1>{{ count }}</h1>
 </template>
-
 <script>
 // import List from "./components/list.vue";
 export default {
