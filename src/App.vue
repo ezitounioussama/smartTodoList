@@ -30,7 +30,25 @@ import "./style.css";
       class="w-[550px] p-4 pl-12 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       placeholder="Add Tasks..."
     />
-
+    <button
+      type="button"
+      class="absolute inset-y-0 right-0 flex items-center pr-3"
+    >
+      <svg
+        @click="startSpeechRecognition"
+        aria-hidden="true"
+        class="w-4 h-4 absolute right-20 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+    </button>
     <button
       @click="addToList"
       type="button"
@@ -41,7 +59,7 @@ import "./style.css";
   </div>
   <article
     :class="articleHidden ? 'hidden' : ''"
-    class="rounded-xl border border-gray-700 bg-gray-800 p-4 mx-5 text-white w-[550px]"
+    class="rounded-xl bg-gray-700 p-4 mx-5 text-white w-[550px]"
   >
     <input type="checkbox" @change="(e) => selectAll(e.target.checked)" />
     <span class="mx-3">Select All</span>
@@ -60,20 +78,20 @@ import "./style.css";
             @change="() => !item.isDone"
           />
 
-          <span
-            class="block mx-3 h-full rounded-lg border border-gray-700 p-2 hover:border-pink-600"
+          <div
+            class="block mx-3 w-full h-full rounded-lg border border-gray-700 p-2 hover:border-pink-600"
           >
             <p
-              class="text-lg font-medium text-gray-300"
+              class="text-lg font-medium text-gray-300 w-full"
               :class="
                 item.isDone
-                  ? 'line-through decoration-4 decoration-blue-600'
+                  ? 'line-through decoration-4 decoration-pink-200'
                   : ''
               "
             >
               {{ item.message }}
             </p>
-          </span>
+          </div>
         </div>
         <svg
           @click="() => remove(index)"
@@ -112,6 +130,7 @@ export default {
       items: [],
       console: console,
       articleHidden: true,
+      transcribedText: "",
     };
   },
   methods: {
@@ -132,6 +151,17 @@ export default {
       this.count.AllCount < 1
         ? (this.articleHidden = true)
         : (this.articleHidden = false);
+    },
+    startSpeechRecognition() {
+      const speechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new speechRecognition();
+
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        this.message = event.results[0][0].transcript;
+      };
     },
   },
   computed: {
