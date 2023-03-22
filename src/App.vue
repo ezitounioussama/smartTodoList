@@ -156,9 +156,8 @@ export default {
       const speechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new speechRecognition();
-
       recognition.start();
-
+      recognition.lang = "en-US";
       recognition.onresult = (event) => {
         this.message = event.results[0][0].transcript;
       };
