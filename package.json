@@ -2,7 +2,7 @@
   "name": "todolist",
   "version": "0.0.0",
   "private": true,
-  "homepage": "https://github.com/ezitounioussama/smartTodoList/",
+  "homepage": "https://ezitounioussama.github.io/smartTodoList/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
